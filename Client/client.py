@@ -16,6 +16,7 @@
 import socket
 import os
 from Crypto.PublicKey import RSA
+from Crypto.Cipher import AES
 import base64
 
 
@@ -45,20 +46,31 @@ def generate_key():
 # Takes an AES session key and encrypts it using the appropriate
 # key and return the value
 def encrypt_handshake(session_key):
-	# TODO: Implement this function
+	# TODO: Implement this function -- done
+	encypted_key = pub_key.encrypt(session_key, 32)
+	return encypted_key[0]
 	pass
 
 
 # Encrypts the message using AES. Same as server function
 def encrypt_message(message, session_key):
-	# TODO: Implement this function
+	# TODO: Implement this function -- done
+	message = pad_message(message)
+	nonce = 16 * '\x00' 
+	cypher = AES.new(session_key, AES.MODE_CBC, nonce)
+	encrypted_message = cypher.encrypt(message)
+	return encrypted_message
 	pass
 
 
 # Decrypts the message using AES. Same as server function
 def decrypt_message(message, session_key):
 	# TODO: Implement this function
-	pass
+	nonce = 16 * '\x00' 
+	cypher = AES.new(session_key, AES.MODE_CBC, nonce)
+	decrypted_message = cypher.decrypt(message)
+	decrypted_message = str(decrypted_message, 'utf-8')
+	return decrypted_message
 
 
 # Sends a message over TCP
@@ -102,7 +114,10 @@ def main():
 			print("Couldn't connect to server")
 			exit(0)
 
-		# TODO: Encrypt message and send to server
+		# TODO: Encrypt message and send to server -- done
+		user_message = "User: {} Password: {}".format(user, password)
+		encrypted_user_message = encrypt_message(user_message, key)
+		send_message(sock, encrypted_user_message)
 
 		# TODO: Receive and decrypt response from server
 	finally:
