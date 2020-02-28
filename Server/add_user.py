@@ -6,12 +6,16 @@
     The solution contains the same number of lines (plus imports)
 """
 
+import os
+import hashlib
+
 user = input("Enter a username: ")
 password = input("Enter a password: ")
 
 # TODO: Create a salt and hash the password
-# salt = ???
-# hashed_password = ???
+salt = str(os.urandom(16))
+hashed_password = hashlib.sha512((password + salt).encode('utf-8')).hexdigest()
+
 
 try:
     reading = open("passfile.txt", 'r')
