@@ -28,7 +28,7 @@ pub_key = RSA.importKey(pub_key_string)
 
 # import server's private key
 priv_key_string = open("priv_key.pem","r").read()
-pub_key = RSA.importKey(priv_key_string)
+priv_key = RSA.importKey(priv_key_string)
 
 
 # A helper function. It may come in handy when performing symmetric encryption
@@ -39,25 +39,27 @@ def pad_message(message):
 # Write a function that decrypts a message using the server's private key
 def decrypt_key(session_key):
 	# TODO: Implement this function
-	pass
+	decrypted_key = priv_key.decrypt(session_key)
+	return decrypted_key
 
 
 # Write a function that decrypts a message using the session key
-def decrypt_message(client_message, session_key):
+def decrypt_message(message, session_key):
 	# TODO: Implement this function
-	pass
+	nonce = 16 * '\x00' 
+	cypher = AES.new(session_key, AES.MODE_CBC, nonce)
+	decrypted_message = cypher.decrypt(message)
+	decrypted_message = str(decrypted_message, 'utf-8')
+	return decrypted_message
 
 
 # Encrypt a message using the session key
 def encrypt_message(message, session_key):
 	# TODO: Implement this function -- done
-	session_key = base64.b64decode(session_key)
-	cipher = AES.new(session_key)
-	padded_mesage = pad_message(message)
-	encrypted_message = cipher.encrypt(padded_mesage)
-	encoded_encryption = base64.b64encode(encrypted_message)
-	return encoded_encryption
-	pass
+	nonce = 16 * '\x00' 
+	cypher = AES.new(session_key, AES.MODE_CBC, nonce)
+	encrypted_message = cypher.encrypt(message)
+	return encrypted_message
 
 
 # Receive 1024 bytes from the client
@@ -84,7 +86,7 @@ def verify_hash(user, password):
 		for line in reader.read().split('\n'):
 			line = line.split("\t")
 			if line[0] == user:
-				# TODO: Generate the hashed password
+				# TODO: Generate the hashed password -- done
 				salt = line[1]
 				hashed_password = hashlib.sha512((password + salt).encode('utf-8')).hexdigest()
 				return hashed_password == line[2]
@@ -123,7 +125,8 @@ def main():
 				# Receive encrypted message from client
 				ciphertext_message = receive_message(connection)
 
-				# TODO: Decrypt message from client
+				# TODO: Decrypt message from client -- done
+				decrypted_message = decrypt_message(ciphertext_message, plaintext_key)
 
 				# TODO: Split response from user into the username and password
 
