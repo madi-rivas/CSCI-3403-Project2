@@ -7,7 +7,7 @@
 		(Feel free to use more or less, this
 		is provided as a sanity check)
 
-	Put your team members' names:
+	Put your team members' names: Madison Rivas, Nathan Howard, Tyler Milligan
 
 
 
@@ -15,9 +15,20 @@
 
 import socket
 import hashlib
+from Crypto.Cipher import AES
+import base64
+from Crypto.PublicKey import RSA
 
 host = "localhost"
 port = 10001
+
+# import server's public key
+pub_key_string = open("../pub_key.pem","r").read()
+pub_key = RSA.importKey(pub_key_string)
+
+# import server's private key
+priv_key_string = open("priv_key.pem","r").read()
+pub_key = RSA.importKey(priv_key_string)
 
 
 # A helper function. It may come in handy when performing symmetric encryption
@@ -39,7 +50,13 @@ def decrypt_message(client_message, session_key):
 
 # Encrypt a message using the session key
 def encrypt_message(message, session_key):
-	# TODO: Implement this function
+	# TODO: Implement this function -- done
+	session_key = base64.b64decode(session_key)
+	cipher = AES.new(session_key)
+	padded_mesage = pad_message(message)
+	encrypted_message = cipher.encrypt(padded_mesage)
+	encoded_encryption = base64.b64encode(encrypted_message)
+	return encoded_encryption
 	pass
 
 
