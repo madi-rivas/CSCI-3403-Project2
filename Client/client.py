@@ -60,12 +60,11 @@ def encrypt_message(message, session_key):
 	cypher = AES.new(session_key, AES.MODE_CBC, nonce)
 	encrypted_message = cypher.encrypt(message)
 	return encrypted_message
-	pass
 
 
 # Decrypts the message using AES. Same as server function
 def decrypt_message(message, session_key):
-	# TODO: Implement this function
+	# TODO: Implement this function -- done
 	nonce = 16 * '\x00' 
 	cypher = AES.new(session_key, AES.MODE_CBC, nonce)
 	decrypted_message = cypher.decrypt(message)
@@ -115,11 +114,14 @@ def main():
 			exit(0)
 
 		# TODO: Encrypt message and send to server -- done
-		user_message = "User: {} Password: {}".format(user, password)
+		user_message = "{0}\t{1}".format(user, password)
 		encrypted_user_message = encrypt_message(user_message, key)
 		send_message(sock, encrypted_user_message)
 
-		# TODO: Receive and decrypt response from server
+		# TODO: Receive and decrypt response from server -- done
+		server_response = receive_message(sock)
+		decrypted_response = decrypt_message(server_response, key)
+		print(decrypted_response)
 	finally:
 		print('closing socket')
 		sock.close()
