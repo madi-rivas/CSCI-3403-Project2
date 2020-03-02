@@ -47,7 +47,7 @@ def decrypt_key(session_key):
 def decrypt_message(message, session_key):
 	# TODO: Implement this function
 	nonce = 16 * '\x00' 
-	cypher = AES.new(session_key, AES.MODE_CBC, nonce)
+	cypher = AES.new(session_key, AES.MODE_CFB, nonce)
 	decrypted_message = cypher.decrypt(message)
 	decrypted_message = str(decrypted_message, 'utf-8')
 	return decrypted_message.strip()
@@ -58,7 +58,7 @@ def encrypt_message(message, session_key):
 	# TODO: Implement this function -- done
 	message = pad_message(message)
 	nonce = 16 * '\x00' 
-	cypher = AES.new(session_key, AES.MODE_CBC, nonce)
+	cypher = AES.new(session_key, AES.MODE_CFB, nonce)
 	encrypted_message = cypher.encrypt(message)
 	return encrypted_message
 
