@@ -50,12 +50,13 @@ def decrypt_message(message, session_key):
 	cypher = AES.new(session_key, AES.MODE_CBC, nonce)
 	decrypted_message = cypher.decrypt(message)
 	decrypted_message = str(decrypted_message, 'utf-8')
-	return decrypted_message
+	return decrypted_message.strip()
 
 
 # Encrypt a message using the session key
 def encrypt_message(message, session_key):
 	# TODO: Implement this function -- done
+	message = pad_message(message)
 	nonce = 16 * '\x00' 
 	cypher = AES.new(session_key, AES.MODE_CBC, nonce)
 	encrypted_message = cypher.encrypt(message)
@@ -128,12 +129,21 @@ def main():
 				# TODO: Decrypt message from client -- done
 				decrypted_message = decrypt_message(ciphertext_message, plaintext_key)
 
-				# TODO: Split response from user into the username and password
+				# TODO: Split response from user into the username and password -- done
+				username = decrypted_message.split('\t')[0]
+				password = decrypted_message.split('\t')[1]
+				is_verified = verify_hash(username, password)
 
-				# TODO: Encrypt response to client
+				# TODO: Encrypt response to client -- done
+				if (is_verified):
+					message_response = "User successfully authenticated!"
+					encrypted_message = encrypt_message(message_response, plaintext_key)
+				else:
+					message_response = "Password or username incorrect"
+					encrypted_message = encrypt_message(message_response, plaintext_key)
 
 				# Send encrypted response
-				send_message(connection, ciphertext_response)
+				send_message(connection, encrypted_message)
 			finally:
 				# Clean up the connection
 				connection.close()
